@@ -40,11 +40,13 @@ jobs:
         uses: docker/setup-qemu-action@v3
         with:
           platforms: arm,arm64
+          reset: true
       - name: Verify ARM binfmt
         run: |
           test -e /proc/sys/fs/binfmt_misc/qemu-arm
           cat /proc/sys/fs/binfmt_misc/qemu-arm
           grep -q '^enabled' /proc/sys/fs/binfmt_misc/qemu-arm
+          grep -q '^flags:.*F' /proc/sys/fs/binfmt_misc/qemu-arm
 
       - name: Build
         run: cd pi-gen && sudo ./build.sh
