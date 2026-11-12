@@ -40,6 +40,13 @@ jobs:
         uses: docker/setup-qemu-action@v3
         with:
           platforms: arm,arm64
+      - name: Enable ARM binfmt
+        run: |
+          sudo modprobe binfmt_misc
+          sudo update-binfmts --enable qemu-arm
+          sudo update-binfmts --display qemu-arm
+          ls -la /proc/sys/fs/binfmt_misc/
+
       - name: Build
         run: cd pi-gen && sudo ./build.sh
       - name: Upload image artifact
