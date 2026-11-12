@@ -36,6 +36,10 @@ jobs:
           KEYBOARD_KEYMAP='de'
           KEYBOARD_LAYOUT='German'
           EOF
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm,arm64
       - name: Build
         run: cd pi-gen && sudo ./build.sh
       - name: Upload image artifact
