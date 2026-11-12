@@ -12,7 +12,11 @@ git init -b main
 git config user.name "$(gh api user --jq .login)"
 git config user.email "$(gh api user --jq .id)+$(gh api user --jq .login)@users.noreply.github.com"
 git add .
-git commit -m "Initial MEZO OS 1.0 builder"
+if ! git diff --cached --quiet; then
+    git commit -m "Initial MEZO OS 1.0 builder"
+else
+    echo "Изменений нет — используем существующий коммит."
+fi
 gh repo create "$REPO" "--$VIS" --source=. --remote=origin --push
 OWNER_REPO="$(gh repo view --json nameWithOwner --jq .nameWithOwner)"
 gh workflow run build.yml --repo "$OWNER_REPO"
