@@ -40,12 +40,11 @@ jobs:
         uses: docker/setup-qemu-action@v3
         with:
           platforms: arm,arm64
-      - name: Enable ARM binfmt
+      - name: Verify ARM binfmt
         run: |
-          sudo modprobe binfmt_misc
-          sudo update-binfmts --enable qemu-arm
-          sudo update-binfmts --display qemu-arm
-          ls -la /proc/sys/fs/binfmt_misc/
+          test -e /proc/sys/fs/binfmt_misc/qemu-arm
+          cat /proc/sys/fs/binfmt_misc/qemu-arm
+          grep -q '^enabled' /proc/sys/fs/binfmt_misc/qemu-arm
 
       - name: Build
         run: cd pi-gen && sudo ./build.sh
