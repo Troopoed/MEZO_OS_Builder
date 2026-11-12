@@ -1,0 +1,48 @@
+name: Build MEZO OS
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y coreutils quilt parted qemu-user-static debootstrap zerofree zip dosfstools e2fsprogs libcap2-bin grep rsync xz-utils file git curl bc gpg pigz xxd arch-test bmap-tools kmod
+      - name: Get official pi-gen
+        run: git clone --depth 1 https://github.com/RPi-Distro/pi-gen.git pi-gen
+      - name: Add MEZO layer
+        run: |
+          mkdir -p pi-gen/stage2/99-mezo
+          cp custom-stage/00-mezo/00-packages pi-gen/stage2/99-mezo/00-packages
+          cp custom-stage/00-mezo/00-run.sh pi-gen/stage2/99-mezo/00-run.sh
+          chmod +x pi-gen/stage2/99-mezo/00-run.sh
+      - name: Configure image
+        run: |
+          cat > pi-gen/config <<'EOF'
+          IMG_NAME='MEZO_OS_1.0'
+          RELEASE='bookworm'
+          DEPLOY_COMPRESSION='zip'
+          ENABLE_SSH=1
+          TARGET_HOSTNAME='mezo'
+          LOCALE_DEFAULT='ru_RU.UTF-8'
+          TIMEZONE_DEFAULT='Europe/Berlin'
+          KEYBOARD_KEYMAP='de'
+          KEYBOARD_LAYOUT='German'
+          EOF
+      - name: Build
+        run: cd pi-gen && sudo ./build.sh
+      - name: Upload image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MEZO_OS_1.0-image
+          path: pi-gen/deploy/*
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 3
