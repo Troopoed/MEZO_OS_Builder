@@ -27,7 +27,7 @@ jobs:
         run: |
           cat > pi-gen/config <<'EOF'
           IMG_NAME='MEZO_OS_1.0'
-          RELEASE='bookworm'
+          RELEASE='trixie'
           DEPLOY_COMPRESSION='zip'
           ENABLE_SSH=1
           TARGET_HOSTNAME='mezo'
