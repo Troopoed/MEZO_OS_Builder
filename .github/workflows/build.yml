@@ -23,6 +23,14 @@ jobs:
           cp custom-stage/00-mezo/00-packages pi-gen/stage2/99-mezo/00-packages
           cp custom-stage/00-mezo/00-run.sh pi-gen/stage2/99-mezo/00-run.sh
           chmod +x pi-gen/stage2/99-mezo/00-run.sh
+      - name: Configure Lite image
+        run: |
+          touch pi-gen/stage3/SKIP
+          touch pi-gen/stage4/SKIP
+          touch pi-gen/stage5/SKIP
+          touch pi-gen/stage4/SKIP_IMAGES
+          touch pi-gen/stage5/SKIP_IMAGES
+
       - name: Configure image
         run: |
           cat > pi-gen/config <<'EOF'
